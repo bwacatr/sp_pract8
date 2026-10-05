@@ -141,34 +141,59 @@ public:
             return;
         }
         Node* node = head;
+        Node* prevNode;
+        Node* nextNode;
+
         while (true)
         {
+            prevNode = node->prev;
+            nextNode = node->next;
             int trackDuration = node->track.duration;
 
             if (trackDuration < duration)
             {
                 std::cout << "\n \n" << node->track.title << " Удаляется" << "\n" << std::endl;
 
-                if (node->prev != nullptr && node->next != nullptr)
+                
+                if (prevNode == nullptr)
                 {
-                    Node* prevNode = node->prev;
-                    Node* nextNode = node->next;
-
-                    prevNode->next = nextNode;
-                    nextNode->prev = prevNode;
+                    nextNode->prev = nullptr;
+                    
                 }
+                else if (nextNode == nullptr)
+                {
+                    prevNode->next = nullptr;
+
+                }
+                else
+                {
+                    nextNode->prev = prevNode;
+                    prevNode->next = nextNode;
+                }
+                
+                    
+                
 
                 delete node;
-                break;
+
+                if (nextNode != nullptr)
+                {
+                    node = nextNode;
+                }
+                else
+                    break;
+                
+                
+                
             }
-            if (node->next == nullptr)
+            else if (nextNode != nullptr)
             {
-                break;
+                node = nextNode;
             }
             else
-            {
-                node = node->next;
-            }
+                break;
+
+            
         }
     }
 
@@ -192,13 +217,34 @@ public:
 
                     Node* temp = head;
 
+                    switchedNodePrev->next = temp;
+
+                    if (switchedNodeNext != nullptr)
+                    {
+                        switchedNodeNext->prev = temp;
+                    }
+                    else
+                    {
+                        tail = temp;
+                    }
+                    
+
+                    headNext->prev = switchedNode;
+                    
+
+                    switchedNode->next = headNext;
+                    switchedNode->prev = headPrev;
+
                     head = switchedNode;
 
-                    head->next = headNext;
-                    head->prev = headPrev;
+                    
 
                     temp->next = switchedNodeNext;
                     temp->prev = switchedNodePrev;
+
+                    
+
+                    
 
 
                 }
@@ -380,9 +426,12 @@ public:
         {
             
             temp = head;
-            tail->prev = temp;
+            if (tail->prev == nullptr)
+                tail->prev = temp;
+
             ptr->next = temp;
             temp->prev = ptr;
+            
             head = ptr;
 
 
@@ -405,7 +454,7 @@ public:
 
         Node* temp = nullptr;
 
-        if (tail == nullptr)
+        /*if (tail == nullptr)
         {
             head = ptr;
             tail = ptr;
@@ -418,6 +467,34 @@ public:
             temp->next = ptr;
             tail = ptr;
         }
+
+        return ptr;*/
+
+        if (tail == nullptr)
+        {
+            tail = ptr;
+
+        }
+        else
+        {
+
+            temp = tail;
+            if (head->next == nullptr)
+                head->next = temp;
+            ptr->prev = temp;
+            temp->next = ptr;
+            
+            tail = ptr;
+
+
+
+        }
+
+        if (head == nullptr)
+        {
+            head = ptr;
+        }
+
 
         return ptr;
 
